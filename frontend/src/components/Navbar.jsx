@@ -1,7 +1,7 @@
 import React from "react";
-import { Plane, Sparkles } from "lucide-react";
+import { Plane, Sparkles, UserCircle } from "lucide-react";
 
-function Navbar() {
+function Navbar({ currentUser, onAuthClick, onLogout }) {
   return (
     <nav className="navbar">
       <a className="brand" href="#">
@@ -13,15 +13,27 @@ function Navbar() {
 
       <div className="nav-links" aria-label="Primary navigation">
         <a href="#">Explore</a>
-        <a href="#">Itineraries</a>
+        <a href="#">My Trips</a>
         <a href="#">Pricing</a>
         <a href="#">About</a>
       </div>
 
-      <button className="nav-action" type="button">
-        <Sparkles size={17} />
-        Plan Trip
-      </button>
+      {currentUser ? (
+        <div className="nav-user">
+          <button className="profile-button" type="button">
+            <UserCircle size={18} />
+            {currentUser.name}
+          </button>
+          <button className="logout-button" type="button" onClick={onLogout}>
+            Log out
+          </button>
+        </div>
+      ) : (
+        <button className="nav-action" type="button" onClick={() => onAuthClick("login")}>
+          <Sparkles size={17} />
+          Sign in
+        </button>
+      )}
     </nav>
   );
 }

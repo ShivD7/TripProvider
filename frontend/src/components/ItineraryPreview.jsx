@@ -1,6 +1,7 @@
 import React from "react";
-import { CalendarDays } from "lucide-react";
+import { Bookmark, CalendarDays } from "lucide-react";
 import DayCard from "./DayCard.jsx";
+import GeneratedDayCard from "./GeneratedDayCard.jsx";
 
 function ItineraryPreview({
   submittedTrip,
@@ -8,8 +9,12 @@ function ItineraryPreview({
   generatedItinerary,
   isGenerating,
   generationError,
+  currentUser,
+  onSaveItinerary,
+  saveMessage,
 }) {
   const showMockCards = !generatedItinerary && !isGenerating && !generationError;
+  const generatedDays = generatedItinerary?.days ?? [];
 
   return (
     <section className="dashboard">
@@ -27,10 +32,24 @@ function ItineraryPreview({
                 : "Your trip preview will appear here"}
           </h2>
         </div>
-        <span className="status-pill">
-          {generatedItinerary ? "Live response" : "Mock mode"}
-        </span>
+        <div className="preview-actions">
+          {generatedItinerary && (
+            <button className="save-itinerary-button" type="button" onClick={onSaveItinerary}>
+              <Bookmark size={17} />
+              Save Itinerary
+            </button>
+          )}
+          <span className="status-pill">
+            {generatedItinerary ? (currentUser ? "Ready to save" : "Sign in to save") : "Mock mode"}
+          </span>
+        </div>
       </div>
+
+      {saveMessage && (
+        <div className="save-message">
+          <p>{saveMessage}</p>
+        </div>
+      )}
 
       {isGenerating && (
         <div className="response-panel loading-panel">
@@ -46,7 +65,32 @@ function ItineraryPreview({
       )}
 
       {generatedItinerary && (
-        <pre className="response-panel itinerary-response">{generatedItinerary}</pre>
+        <>
+          <div className="response-panel itinerary-overview">
+            <p>{generatedItinerary.overview}</p>
+          </div>
+
+          <div className="itinerary-grid generated-itinerary-grid">
+            {generatedDays.map((day, index) => (
+              <GeneratedDayCard day={day} index={index} key={day.day_number} />
+            ))}
+          </div>
+
+          {generatedItinerary.sources?.length > 0 && (
+            <div className="response-panel sources-panel">
+              <h3>Sources</h3>
+              <ul>
+                {generatedItinerary.sources.map((source) => (
+                  <li key={source.url}>
+                    <a href={source.url} target="_blank" rel="noreferrer">
+                      {source.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
       )}
 
       {showMockCards && (

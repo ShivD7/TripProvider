@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronDown, MapPin, Search, Sparkles } from "lucide-react";
 
 function TripPlannerForm({
@@ -12,6 +12,18 @@ function TripPlannerForm({
   onSuggestionSelect,
   onSubmit,
 }) {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  function handleDestinationChange(value) {
+    onDestinationChange(value);
+    setShowSuggestions(true);
+  }
+
+  function handleSuggestionSelect(place) {
+    onSuggestionSelect(place);
+    setShowSuggestions(false);
+  }
+
   return (
     <form className="planner" onSubmit={onSubmit}>
       <label className="field destination-field">
@@ -21,19 +33,20 @@ function TripPlannerForm({
           <input
             type="text"
             value={destination}
-            onChange={(event) => onDestinationChange(event.target.value)}
+            onChange={(event) => handleDestinationChange(event.target.value)}
+            onFocus={() => setShowSuggestions(true)}
             placeholder="Where do you want to go?"
             autoComplete="off"
           />
         </div>
 
-        {suggestions.length > 0 && (
+        {showSuggestions && suggestions.length > 0 && (
           <div className="suggestions">
             {suggestions.map((place) => (
               <button
                 key={place}
                 type="button"
-                onClick={() => onSuggestionSelect(place)}
+                onClick={() => handleSuggestionSelect(place)}
               >
                 <Search size={15} />
                 {place}

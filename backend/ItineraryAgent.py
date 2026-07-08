@@ -109,10 +109,10 @@ agent = Agent(
     output_type=Itinerary,
 )
 
-def build_itinerary_prompt(destination: str, trip_length: int) -> str:
+def build_itinerary_prompt(destination: str, trip_length_label: str) -> str:
     """Create the prompt sent to the trip planning agent."""
     return (
-        f"Create a {trip_length}  itinerary for {destination}. "
+        f"Create a {trip_length_label} itinerary for {destination}. "
         "Each day must include a theme, morning plan, afternoon plan, evening plan, "
         "and practical notes. Use web search for current attraction and travel "
         "information. Include source URLs when available."
@@ -167,10 +167,9 @@ def format_itinerary(itinerary: Itinerary) -> str:
     return "\n".join(lines).strip()
 
 async def create_itinerary(destination: str, tripLength: int, tripUnit: str):
-    prompt = build_itinerary_prompt(destination, str(tripLength) + " " + tripUnit)
-    print(f"\nCreating a {str(tripLength) + " " + tripUnit} itinerary for {destination}...\n")
+    trip_length_label = f"{tripLength} {tripUnit}"
+    prompt = build_itinerary_prompt(destination, trip_length_label)
+    print(f"\nCreating a {trip_length_label} itinerary for {destination}...\n")
     result = await Runner.run(agent, prompt)
-    itinerary = result.final_output
-    return format_itinerary(itinerary)
-
+    return result.final_output
 

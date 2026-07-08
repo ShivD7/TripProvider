@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import AuthModal from "./components/AuthModal.jsx";
 import Hero from "./components/Hero.jsx";
 import ItineraryPreview from "./components/ItineraryPreview.jsx";
 import Navbar from "./components/Navbar.jsx";
@@ -10,9 +11,14 @@ function App() {
   const [tripLength, setTripLength] = useState(5);
   const [tripUnit, setTripUnit] = useState("days");
   const [submittedTrip, setSubmittedTrip] = useState(null);
-  const [generatedItinerary, setGeneratedItinerary] = useState("");
+  const [generatedItinerary, setGeneratedItinerary] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authMode, setAuthMode] = useState("login");
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [savedItineraries, setSavedItineraries] = useState([]);
+  const [saveMessage, setSaveMessage] = useState("");
 
   const suggestions = useMemo(() => {
     const query = destination.trim().toLowerCase();
@@ -40,6 +46,51 @@ function App() {
 
   const itineraryLengthLabel = `${tripLength} ${tripLength === 1 ? tripUnit.slice(0, -1) : tripUnit}`;
 
+  function openAuth(mode = "login") {
+    setAuthMode(mode);
+    setIsAuthOpen(true);
+  }
+
+  function closeAuth() {
+    setIsAuthOpen(false);
+  }
+
+  function handleAuthSubmit(authData) {
+    setCurrentUser({
+      email: authData.email,
+      name: authData.name,
+    });
+    setIsAuthOpen(false);
+    setSaveMessage("You're signed in. You can now save itineraries to My Trips.");
+  }
+
+  function handleLogout() {
+    setCurrentUser(null);
+    setSaveMessage("");
+  }
+
+  function handleSaveItinerary() {
+    if (!generatedItinerary) {
+      return;
+    }
+
+    if (!currentUser) {
+      setSaveMessage("Sign in or create an account to save this itinerary.");
+      openAuth("login");
+      return;
+    }
+
+    setSavedItineraries((currentItineraries) => [
+      {
+        id: crypto.randomUUID(),
+        savedAt: new Date().toISOString(),
+        itinerary: generatedItinerary,
+      },
+      ...currentItineraries,
+    ]);
+    setSaveMessage(`Saved to My Trips. You now have ${savedItineraries.length + 1} saved itinerary.`);
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -57,7 +108,7 @@ function App() {
       destination: tripRequest.destination,
       length: itineraryLengthLabel,
     });
-    setGeneratedItinerary("");
+    setGeneratedItinerary(null);
     setGenerationError("");
     setIsGenerating(true);
 
@@ -88,7 +139,11 @@ function App() {
 
   return (
     <main className="app">
-      <Navbar />
+      <Navbar
+        currentUser={currentUser}
+        onAuthClick={openAuth}
+        onLogout={handleLogout}
+      />
       <Hero
         destination={destination}
         onDestinationChange={setDestination}
@@ -106,7 +161,19 @@ function App() {
         generatedItinerary={generatedItinerary}
         isGenerating={isGenerating}
         generationError={generationError}
+        currentUser={currentUser}
+        onSaveItinerary={handleSaveItinerary}
+        saveMessage={saveMessage}
       />
+
+      {isAuthOpen && (
+        <AuthModal
+          mode={authMode}
+          onClose={closeAuth}
+          onSubmit={handleAuthSubmit}
+          onModeChange={setAuthMode}
+        />
+      )}
     </main>
   );
 }

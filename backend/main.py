@@ -31,7 +31,7 @@ class TripRequest(BaseModel):
 def root():
     return {"Hello" : "World"}
 
-@app.post("/getItinerary")
+@app.post("/getItinerary", response_model=ItineraryAgent.Itinerary)
 async def get_itinerary(request: TripRequest):  
     itinerary = await ItineraryAgent.create_itinerary(request.destination, request.tripLength, request.tripUnit)
     return itinerary
