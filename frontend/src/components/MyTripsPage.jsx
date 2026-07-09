@@ -23,6 +23,18 @@ function getTripSummary(savedTrip) {
   return overview.length > 150 ? `${overview.slice(0, 150)}...` : overview;
 }
 
+function TripsVisual() {
+  return (
+    <div className="my-trips-visual" aria-hidden="true">
+      <img
+        src="https://images.unsplash.com/photo-1498307833015-e7b400441eb8?auto=format&fit=crop&w=1000&q=80"
+        alt=""
+      />
+      <span>Saved routes stay ready for the next decision.</span>
+    </div>
+  );
+}
+
 function FullScreenItinerary({ savedTrip, onClose }) {
   const itinerary = savedTrip.itinerary;
   const days = itinerary?.days ?? [];
@@ -145,18 +157,21 @@ function MyTripsPage({
       </div>
 
       {!currentUser && (
-        <div className="empty-trips-panel">
-          <span className="empty-trips-icon">
-            <Sparkles size={30} />
-          </span>
-          <h2>Sign in to keep your trips together.</h2>
-          <p>
-            Once you create an account, saved itineraries can live in your travel
-            library instead of disappearing when you refresh or switch devices.
-          </p>
-          <button className="primary-action" type="button" onClick={() => onAuthClick("login")}>
-            Sign In
-          </button>
+        <div className="my-trips-empty-layout">
+          <div className="empty-trips-panel">
+            <span className="empty-trips-icon">
+              <Sparkles size={30} />
+            </span>
+            <h2>Sign in to keep your trips together.</h2>
+            <p>
+              Once you create an account, saved itineraries can live in your travel
+              library instead of disappearing when you refresh or switch devices.
+            </p>
+            <button className="primary-action" type="button" onClick={() => onAuthClick("login")}>
+              Sign In
+            </button>
+          </div>
+          <TripsVisual />
         </div>
       )}
 
@@ -181,18 +196,21 @@ function MyTripsPage({
       )}
 
       {currentUser && !isLoading && !errorMessage && recentTrips.length === 0 && (
-        <div className="empty-trips-panel">
-          <span className="empty-trips-icon">
-            <MapPin size={30} />
-          </span>
-          <h2>No saved itineraries yet.</h2>
-          <p>
-            Generate an itinerary, then press Save Itinerary to add it here for
-            later.
-          </p>
-          <button className="primary-action" type="button" onClick={onPlanTrip}>
-            Create Your First Trip
-          </button>
+        <div className="my-trips-empty-layout">
+          <div className="empty-trips-panel">
+            <span className="empty-trips-icon">
+              <MapPin size={30} />
+            </span>
+            <h2>No saved itineraries yet.</h2>
+            <p>
+              Generate an itinerary, then press Save Itinerary to add it here for
+              later.
+            </p>
+            <button className="primary-action" type="button" onClick={onPlanTrip}>
+              Create Your First Trip
+            </button>
+          </div>
+          <TripsVisual />
         </div>
       )}
 

@@ -26,8 +26,13 @@ function Navbar({ currentUser, currentPage, onNavigate, onAuthClick, onLogout })
         >
           My Trips
         </button>
-        <button type="button">Pricing</button>
-        <button type="button">About</button>
+        <button
+          className={currentPage === "about" ? "active" : ""}
+          type="button"
+          onClick={() => onNavigate("about")}
+        >
+          About
+        </button>
       </div>
 
       {currentUser ? (

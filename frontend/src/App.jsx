@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import AboutPage from "./components/AboutPage.jsx";
 import AuthModal from "./components/AuthModal.jsx";
 import Hero from "./components/Hero.jsx";
 import ItineraryPreview from "./components/ItineraryPreview.jsx";
@@ -48,6 +49,20 @@ function App() {
   const [isLoadingSavedTrips, setIsLoadingSavedTrips] = useState(false);
   const [savedTripsError, setSavedTripsError] = useState("");
   const [saveNotice, setSaveNotice] = useState(null);
+
+  useEffect(() => {
+    if (!saveNotice) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setSaveNotice(null);
+    }, 3500);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [saveNotice]);
 
   useEffect(() => {
     function setUserFromSession(session) {
@@ -173,10 +188,6 @@ function App() {
       name: authData.name,
     });
     setIsAuthOpen(false);
-    setSaveNotice({
-      type: "success",
-      message: "You're signed in. You can now save itineraries to My Trips.",
-    });
   }
 
   async function handleLogout() {
@@ -389,6 +400,10 @@ function App() {
           onPlanTrip={showPlanner}
           onAuthClick={openAuth}
         />
+      )}
+
+      {currentPage === "about" && (
+        <AboutPage onPlanTrip={showPlanner} />
       )}
 
       {isAuthOpen && (

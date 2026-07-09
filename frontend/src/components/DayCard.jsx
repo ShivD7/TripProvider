@@ -23,7 +23,6 @@ function DayCard({ day, index }) {
           {day.evening}
         </p>
       </div>
-      <div className="card-number">{String(index + 1).padStart(2, "0")}</div>
     </article>
   );
 }
