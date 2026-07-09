@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { ChevronDown, MapPin, Search, Sparkles } from "lucide-react";
+import { CalendarDays, MapPin, Search, Sparkles } from "lucide-react";
 
 function TripPlannerForm({
   destination,
   onDestinationChange,
-  tripLength,
-  onTripLengthChange,
-  tripUnit,
-  onTripUnitChange,
+  startDate,
+  endDate,
+  maxDate,
+  maxTripLengthDays,
+  onStartDateChange,
+  onEndDateChange,
   suggestions,
   onSuggestionSelect,
   onSubmit,
@@ -56,28 +58,41 @@ function TripPlannerForm({
         )}
       </label>
 
-      <label className="field length-field">
-        <span>Trip Length</span>
-        <div className="length-controls">
-          <input
-            type="number"
-            min="1"
-            value={tripLength}
-            onChange={(event) => onTripLengthChange(Number(event.target.value))}
-          />
-          <div className="select-shell">
-            <select
-              value={tripUnit}
-              onChange={(event) => onTripUnitChange(event.target.value)}
-            >
-              <option value="days">Days</option>
-              <option value="weeks">Weeks</option>
-              <option value="months">Months</option>
-            </select>
-            <ChevronDown size={16} />
-          </div>
+      <fieldset className="field date-range-field">
+        <div className="field-heading-row">
+          <legend>Trip Dates</legend>
+          <span>Max {maxTripLengthDays} days</span>
         </div>
-      </label>
+        <div className="date-controls">
+          <label>
+            <span>Start</span>
+            <div className="date-input-shell">
+              <CalendarDays size={17} />
+              <input
+                type="date"
+                value={startDate}
+                max={maxDate}
+                onChange={(event) => onStartDateChange(event.target.value)}
+                required
+              />
+            </div>
+          </label>
+          <label>
+            <span>End</span>
+            <div className="date-input-shell">
+              <CalendarDays size={17} />
+              <input
+                type="date"
+                min={startDate}
+                max={maxDate}
+                value={endDate}
+                onChange={(event) => onEndDateChange(event.target.value)}
+                required
+              />
+            </div>
+          </label>
+        </div>
+      </fieldset>
 
       <button className="submit-button" type="submit">
         <Sparkles size={18} />

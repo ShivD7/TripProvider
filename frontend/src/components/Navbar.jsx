@@ -1,21 +1,33 @@
 import React from "react";
 import { Plane, Sparkles, UserCircle } from "lucide-react";
 
-function Navbar({ currentUser, onAuthClick, onLogout }) {
+function Navbar({ currentUser, currentPage, onNavigate, onAuthClick, onLogout }) {
   return (
     <nav className="navbar">
-      <a className="brand" href="#">
+      <button className="brand nav-button" type="button" onClick={() => onNavigate("planner")}>
         <span className="brand-mark">
           <Plane size={20} />
         </span>
         TripProvider
-      </a>
+      </button>
 
       <div className="nav-links" aria-label="Primary navigation">
-        <a href="#">Explore</a>
-        <a href="#">My Trips</a>
-        <a href="#">Pricing</a>
-        <a href="#">About</a>
+        <button
+          className={currentPage === "planner" ? "active" : ""}
+          type="button"
+          onClick={() => onNavigate("planner")}
+        >
+          Explore
+        </button>
+        <button
+          className={currentPage === "my-trips" ? "active" : ""}
+          type="button"
+          onClick={() => onNavigate("my-trips")}
+        >
+          My Trips
+        </button>
+        <button type="button">Pricing</button>
+        <button type="button">About</button>
       </div>
 
       {currentUser ? (

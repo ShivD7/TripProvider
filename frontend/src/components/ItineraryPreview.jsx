@@ -1,5 +1,5 @@
 import React from "react";
-import { Bookmark, CalendarDays } from "lucide-react";
+import { Bookmark, CalendarDays, CheckCircle2 } from "lucide-react";
 import DayCard from "./DayCard.jsx";
 import GeneratedDayCard from "./GeneratedDayCard.jsx";
 
@@ -11,7 +11,7 @@ function ItineraryPreview({
   generationError,
   currentUser,
   onSaveItinerary,
-  saveMessage,
+  saveNotice,
 }) {
   const showMockCards = !generatedItinerary && !isGenerating && !generationError;
   const generatedDays = generatedItinerary?.days ?? [];
@@ -45,9 +45,22 @@ function ItineraryPreview({
         </div>
       </div>
 
-      {saveMessage && (
-        <div className="save-message">
-          <p>{saveMessage}</p>
+      {saveNotice && (
+        <div className={`save-toast ${saveNotice.type}`} role="status" aria-live="polite">
+          <span className="save-toast-icon">
+            <Bookmark size={22} />
+            <CheckCircle2 size={14} />
+          </span>
+          <div>
+            <strong>
+              {saveNotice.type === "error"
+                ? "Save failed"
+                : saveNotice.type === "info"
+                  ? "Sign in needed"
+                  : "Trip saved"}
+            </strong>
+            <p>{saveNotice.message}</p>
+          </div>
         </div>
       )}
 

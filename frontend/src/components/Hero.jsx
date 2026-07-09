@@ -5,10 +5,12 @@ import TripPlannerForm from "./TripPlannerForm.jsx";
 function Hero({
   destination,
   onDestinationChange,
-  tripLength,
-  onTripLengthChange,
-  tripUnit,
-  onTripUnitChange,
+  startDate,
+  endDate,
+  maxDate,
+  maxTripLengthDays,
+  onStartDateChange,
+  onEndDateChange,
   suggestions,
   onSuggestionSelect,
   onSubmit,
@@ -29,17 +31,19 @@ function Hero({
         </p>
         <h1>Design a trip that feels like it was made by someone who knows the city.</h1>
         <p className="hero-copy">
-          Pick a destination, choose the trip length, and preview the itinerary
+          Pick a destination, choose your travel dates, and preview the itinerary
           experience your agent will generate once your backend is connected.
         </p>
 
         <TripPlannerForm
           destination={destination}
           onDestinationChange={onDestinationChange}
-          tripLength={tripLength}
-          onTripLengthChange={onTripLengthChange}
-          tripUnit={tripUnit}
-          onTripUnitChange={onTripUnitChange}
+          startDate={startDate}
+          endDate={endDate}
+          maxDate={maxDate}
+          maxTripLengthDays={maxTripLengthDays}
+          onStartDateChange={onStartDateChange}
+          onEndDateChange={onEndDateChange}
           suggestions={suggestions}
           onSuggestionSelect={onSuggestionSelect}
           onSubmit={onSubmit}

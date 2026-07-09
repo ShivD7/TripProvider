@@ -1,18 +1,50 @@
 import React, { useState } from "react";
 import { Mail } from "lucide-react";
+import { supabase } from "../lib/supabaseClient.js";
 
 function SignupForm({ onSubmit }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
+    setIsSubmitting(true);
+
+    const cleanEmail = email.trim();
+    const displayName = name.trim() || cleanEmail.split("@")[0];
+    const { data, error } = await supabase.auth.signUp({
+      email: cleanEmail,
+      password,
+      options: {
+        data: {
+          name: displayName,
+        },
+      },
+    });
+
+    setIsSubmitting(false);
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    if (!data.session) {
+      setSuccessMessage("Check your email to confirm your account before signing in.");
+      return;
+    }
 
     onSubmit({
-      email: email.trim(),
-      name: name.trim() || email.trim().split("@")[0],
-      password,
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.user_metadata?.name || displayName,
+      session: data.session,
     });
   }
 
@@ -54,9 +86,12 @@ function SignupForm({ onSubmit }) {
         />
       </label>
 
-      <button className="auth-submit" type="submit">
-        Create Account
+      <button className="auth-submit" type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Creating Account..." : "Create Account"}
       </button>
+
+      {errorMessage && <p className="auth-error">{errorMessage}</p>}
+      {successMessage && <p className="auth-success">{successMessage}</p>}
     </form>
   );
 }
