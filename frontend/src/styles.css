@@ -1596,6 +1596,46 @@ h1 {
   font-weight: 750;
 }
 
+.dining-suggestion {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(160, 105, 52, 0.18);
+  border-radius: 14px;
+  background: rgba(250, 244, 232, 0.72);
+  color: #75502f;
+}
+
+.dining-suggestion > svg {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+}
+
+.dining-suggestion div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.dining-suggestion span,
+.dining-suggestion small {
+  font-size: 0.78rem;
+}
+
+.dining-suggestion span {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dining-suggestion strong {
+  color: #3f2c20;
+}
+
+.dining-suggestion p {
+  margin: 0.2rem 0 0;
+}
+
 .day-notes {
   margin-top: 18px;
   padding: 14px;

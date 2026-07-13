@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown, Clock3, MapPin } from "lucide-react";
+import { ChevronDown, Clock3, MapPin, Utensils } from "lucide-react";
 
 function summarizeText(text, maxLength = 220) {
   if (!text) {
@@ -61,6 +61,24 @@ function DaySection({ label, section }) {
               {section.estimated_duration}
             </span>
           )}
+        </div>
+      )}
+
+      {section.dining_suggestion && (
+        <div className="dining-suggestion">
+          <Utensils size={17} />
+          <div>
+            <span>Where to eat</span>
+            <strong>{section.dining_suggestion.restaurant_name}</strong>
+            {(section.dining_suggestion.cuisine || section.dining_suggestion.location) && (
+              <small>
+                {[section.dining_suggestion.cuisine, section.dining_suggestion.location]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </small>
+            )}
+            <p>{section.dining_suggestion.why_it_fits}</p>
+          </div>
         </div>
       )}
     </div>

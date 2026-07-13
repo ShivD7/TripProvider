@@ -63,3 +63,35 @@ async def weather(
         endDate,
     )
     return weather_data
+
+@app.get("/getNearbyRestaurants")
+async def nearby_restaurants(
+    destination: str = Query(description="The city, country, or destination to search near."),
+    area: str | None = Query(default=None, description="Optional neighborhood or area inside the destination."),
+    cuisine: str | None = Query(default=None, description="Optional cuisine or food preference."),
+    limit: int = Query(default=8, ge=1, le=20, description="Maximum number of restaurant results."),
+):
+    restaurant_data = await ItineraryAgent.fetch_nearby_restaurants(
+        destination,
+        area,
+        cuisine,
+        limit,
+    )
+    return restaurant_data
+
+@app.get("/getEvents")
+async def events(
+    destination: str = Query(description="The city, country, or destination to search for events."),
+    startDate: str | None = Query(default=None, description="Optional trip start date in YYYY-MM-DD format."),
+    endDate: str | None = Query(default=None, description="Optional trip end date in YYYY-MM-DD format."),
+    interests: str | None = Query(default=None, description="Optional event interests such as music, sports, theatre, or festivals."),
+    limit: int = Query(default=8, ge=1, le=20, description="Maximum number of event results."),
+):
+    event_data = await ItineraryAgent.fetch_events_with_web_search(
+        destination,
+        startDate,
+        endDate,
+        interests,
+        limit,
+    )
+    return event_data
