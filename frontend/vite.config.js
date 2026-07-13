@@ -3,5 +3,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: ProcessingInstruction.env.VITE_BASE_PATH || "/TripProvider"
+  base: process.env.VITE_BASE_PATH || "/",
 });
