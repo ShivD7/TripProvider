@@ -471,6 +471,20 @@ h1 {
   box-shadow: 0 18px 38px rgba(224, 86, 47, 0.42);
 }
 
+.submit-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
+  background: #b85d43;
+  box-shadow: none;
+}
+
+.submit-button:disabled:hover {
+  transform: none;
+  background: #b85d43;
+  box-shadow: none;
+}
+
 .dashboard {
   padding: 58px clamp(20px, 4vw, 64px) 76px;
   background: #f5f7f3;
@@ -513,6 +527,30 @@ h1 {
 .save-itinerary-button:hover {
   transform: translateY(-2px);
   background: #244d3b;
+}
+
+.clear-itinerary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #ccd9d1;
+  border-radius: 8px;
+  color: #42534a;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 850;
+  transition:
+    background 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.clear-itinerary-button:hover {
+  transform: translateY(-2px);
+  border-color: #9fb3a6;
+  background: #edf5f2;
 }
 
 .section-heading h2 {
@@ -562,6 +600,11 @@ h1 {
   background: rgba(255, 251, 235, 0.96);
 }
 
+.account-toast {
+  border-color: #bdd6e5;
+  background: rgba(239, 248, 252, 0.97);
+}
+
 .save-toast-icon {
   position: relative;
   display: grid;
@@ -573,6 +616,10 @@ h1 {
   color: #ffffff;
   background: linear-gradient(135deg, #e0562f, #315f4c);
   animation: bookmarkBounce 700ms cubic-bezier(0.2, 1.45, 0.32, 1) both;
+}
+
+.account-toast-icon {
+  background: linear-gradient(135deg, #315f4c, #55768a);
 }
 
 .save-toast-icon svg:last-child {
@@ -1135,15 +1182,52 @@ h1 {
   line-height: 1.65;
 }
 
+.saved-trip-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: auto;
+}
+
 .text-action {
   justify-self: start;
-  margin-top: auto;
   padding: 0;
   border: 0;
   color: #315f4c;
   background: transparent;
   cursor: pointer;
   font-weight: 900;
+}
+
+.delete-trip-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid rgba(201, 68, 44, 0.2);
+  border-radius: 8px;
+  color: #9b3525;
+  background: rgba(201, 68, 44, 0.07);
+  cursor: pointer;
+  font-weight: 900;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.delete-trip-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(201, 68, 44, 0.36);
+  background: rgba(201, 68, 44, 0.12);
+}
+
+.delete-trip-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .itinerary-viewer-backdrop {

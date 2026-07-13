@@ -1,5 +1,5 @@
 import React from "react";
-import { Bookmark, CalendarDays, CheckCircle2, CloudSun } from "lucide-react";
+import { Bookmark, CalendarDays, CheckCircle2, CloudSun, X } from "lucide-react";
 import DayCard from "./DayCard.jsx";
 import GeneratedDayCard from "./GeneratedDayCard.jsx";
 
@@ -68,6 +68,7 @@ function ItineraryPreview({
   generationError,
   currentUser,
   onSaveItinerary,
+  onClearItinerary,
   saveNotice,
 }) {
   const showMockCards = !generatedItinerary && !isGenerating && !generationError;
@@ -91,10 +92,16 @@ function ItineraryPreview({
         </div>
         <div className="preview-actions">
           {generatedItinerary && (
-            <button className="save-itinerary-button" type="button" onClick={onSaveItinerary}>
-              <Bookmark size={17} />
-              Save Itinerary
-            </button>
+            <>
+              <button className="save-itinerary-button" type="button" onClick={onSaveItinerary}>
+                <Bookmark size={17} />
+                Save Itinerary
+              </button>
+              <button className="clear-itinerary-button" type="button" onClick={onClearItinerary}>
+                <X size={17} />
+                Clear
+              </button>
+            </>
           )}
           <span className="status-pill">
             {generatedItinerary ? (currentUser ? "Ready to save" : "Sign in to save") : "Mock mode"}

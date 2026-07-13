@@ -7,6 +7,7 @@ function TripPlannerForm({
   startDate,
   endDate,
   preferences,
+  minDate,
   maxDate,
   maxTripLengthDays,
   onStartDateChange,
@@ -15,6 +16,7 @@ function TripPlannerForm({
   suggestions,
   onSuggestionSelect,
   onSubmit,
+  isGenerating,
 }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -73,6 +75,7 @@ function TripPlannerForm({
               <input
                 type="date"
                 value={startDate}
+                min={minDate}
                 max={maxDate}
                 onChange={(event) => onStartDateChange(event.target.value)}
                 required
@@ -108,9 +111,9 @@ function TripPlannerForm({
         </div>
       </label>
 
-      <button className="submit-button" type="submit">
+      <button className="submit-button" type="submit" disabled={isGenerating}>
         <Sparkles size={18} />
-        Generate Itinerary
+        {isGenerating ? "Generating..." : "Generate Itinerary"}
       </button>
     </form>
   );

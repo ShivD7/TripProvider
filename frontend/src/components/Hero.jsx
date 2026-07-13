@@ -8,6 +8,7 @@ function Hero({
   startDate,
   endDate,
   preferences,
+  minDate,
   maxDate,
   maxTripLengthDays,
   onStartDateChange,
@@ -16,6 +17,7 @@ function Hero({
   suggestions,
   onSuggestionSelect,
   onSubmit,
+  isGenerating,
 }) {
   return (
     <section className="hero">
@@ -43,6 +45,7 @@ function Hero({
           startDate={startDate}
           endDate={endDate}
           preferences={preferences}
+          minDate={minDate}
           maxDate={maxDate}
           maxTripLengthDays={maxTripLengthDays}
           onStartDateChange={onStartDateChange}
@@ -51,6 +54,7 @@ function Hero({
           suggestions={suggestions}
           onSuggestionSelect={onSuggestionSelect}
           onSubmit={onSubmit}
+          isGenerating={isGenerating}
         />
       </div>
     </section>

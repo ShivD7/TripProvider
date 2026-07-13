@@ -8,11 +8,15 @@ import Navbar from "./components/Navbar.jsx";
 import { mockDays } from "./data/mockItinerary.js";
 import { destinations } from "./destinations.js";
 import { supabase } from "./lib/supabaseClient.js";
+import { CheckCircle2, LogOut } from "lucide-react";
 
 const maxTripLengthDays = 21;
 
 function formatDateInput(date) {
-  return date.toISOString().slice(0, 10);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function addDays(dateValue, days) {
@@ -29,7 +33,8 @@ function calculateInclusiveDays(startDate, endDate) {
   return Math.floor((end - start) / dayInMilliseconds) + 1;
 }
 
-const defaultStartDate = formatDateInput(new Date());
+const minimumStartDate = addDays(formatDateInput(new Date()), 1);
+const defaultStartDate = minimumStartDate;
 const defaultEndDate = addDays(defaultStartDate, 4);
 const maxSelectableDate = addDays(defaultStartDate, 365);
 
@@ -50,6 +55,7 @@ function App() {
   const [isLoadingSavedTrips, setIsLoadingSavedTrips] = useState(false);
   const [savedTripsError, setSavedTripsError] = useState("");
   const [saveNotice, setSaveNotice] = useState(null);
+  const [accountNotice, setAccountNotice] = useState(null);
 
   useEffect(() => {
     if (!saveNotice) {
@@ -64,6 +70,20 @@ function App() {
       window.clearTimeout(timeoutId);
     };
   }, [saveNotice]);
+
+  useEffect(() => {
+    if (!accountNotice) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setAccountNotice(null);
+    }, 3500);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [accountNotice]);
 
   useEffect(() => {
     function setUserFromSession(session) {
@@ -189,16 +209,40 @@ function App() {
       name: authData.name,
     });
     setIsAuthOpen(false);
+    setAccountNotice({
+      type: "success",
+      title: "Signed in",
+      message: `Welcome back${authData.name ? `, ${authData.name}` : ""}. Your saved trips are ready.`,
+    });
   }
 
   async function handleLogout() {
     await supabase.auth.signOut();
     setCurrentUser(null);
     setSaveNotice(null);
+    setAccountNotice({
+      type: "success",
+      title: "Signed out",
+      message: "You have been logged out of your TripProvider account.",
+    });
   }
 
   function handleNavigate(page) {
     setCurrentPage(page);
+  }
+
+  function resetTripForm() {
+    setDestination("");
+    setStartDate(defaultStartDate);
+    setEndDate(defaultEndDate);
+    setPreferences("");
+  }
+
+  function handleClearGeneratedItinerary() {
+    setSubmittedTrip(null);
+    setGeneratedItinerary(null);
+    setGenerationError("");
+    setSaveNotice(null);
   }
 
   function handleStartDateChange(value) {
@@ -207,7 +251,11 @@ function App() {
       return;
     }
 
-    const nextStartDate = value > maxSelectableDate ? maxSelectableDate : value;
+    const nextStartDate = value < minimumStartDate
+      ? minimumStartDate
+      : value > maxSelectableDate
+        ? maxSelectableDate
+        : value;
 
     setStartDate(nextStartDate);
 
@@ -294,6 +342,28 @@ function App() {
     });
   }
 
+  async function handleDeleteSavedItinerary(savedTripId) {
+    if (!currentUser || !savedTripId) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from("saved_itineraries")
+      .delete()
+      .eq("id", savedTripId)
+      .eq("user_id", currentUser.id);
+
+    if (error) {
+      setSavedTripsError(`Could not delete saved trip: ${error.message}`);
+      return;
+    }
+
+    setSavedItineraries((currentItineraries) =>
+      currentItineraries.filter((savedTrip) => savedTrip.id !== savedTripId)
+    );
+    setSavedTripsError("");
+  }
+
   function showPlanner() {
     setCurrentPage("planner");
   }
@@ -301,10 +371,16 @@ function App() {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    if (isGenerating) {
+      return;
+    }
+
     if (
       !destination.trim() ||
       !startDate ||
       !endDate ||
+      startDate < minimumStartDate ||
+      endDate < startDate ||
       startDate > maxSelectableDate ||
       endDate > maxSelectableDate ||
       tripLength < 1 ||
@@ -345,6 +421,7 @@ function App() {
 
       const itinerary = await response.json();
       setGeneratedItinerary(itinerary);
+      resetTripForm();
     } catch (error) {
       setGenerationError(
         "Could not generate the itinerary. Make sure the FastAPI backend is running on port 8000."
@@ -373,6 +450,7 @@ function App() {
             startDate={startDate}
             endDate={endDate}
             preferences={preferences}
+            minDate={minimumStartDate}
             maxDate={maxSelectableDate}
             maxTripLengthDays={maxTripLengthDays}
             onStartDateChange={handleStartDateChange}
@@ -381,6 +459,7 @@ function App() {
             suggestions={suggestions}
             onSuggestionSelect={setDestination}
             onSubmit={handleSubmit}
+            isGenerating={isGenerating}
           />
           <ItineraryPreview
             submittedTrip={submittedTrip}
@@ -390,6 +469,7 @@ function App() {
             generationError={generationError}
             currentUser={currentUser}
             onSaveItinerary={handleSaveItinerary}
+            onClearItinerary={handleClearGeneratedItinerary}
             saveNotice={saveNotice}
           />
         </>
@@ -403,6 +483,7 @@ function App() {
           errorMessage={savedTripsError}
           onPlanTrip={showPlanner}
           onAuthClick={openAuth}
+          onDeleteTrip={handleDeleteSavedItinerary}
         />
       )}
 
@@ -417,6 +498,19 @@ function App() {
           onSubmit={handleAuthSubmit}
           onModeChange={setAuthMode}
         />
+      )}
+
+      {accountNotice && (
+        <div className={`save-toast account-toast ${accountNotice.type}`} role="status" aria-live="polite">
+          <span className="save-toast-icon account-toast-icon">
+            <LogOut size={22} />
+            <CheckCircle2 size={14} />
+          </span>
+          <div>
+            <strong>{accountNotice.title}</strong>
+            <p>{accountNotice.message}</p>
+          </div>
+        </div>
       )}
     </main>
   );

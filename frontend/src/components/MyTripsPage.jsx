@@ -7,6 +7,7 @@ import {
   MapPin,
   PlusCircle,
   Sparkles,
+  Trash2,
   Utensils,
   X,
 } from "lucide-react";
@@ -208,9 +209,27 @@ function MyTripsPage({
   errorMessage,
   onPlanTrip,
   onAuthClick,
+  onDeleteTrip,
 }) {
   const [selectedTrip, setSelectedTrip] = useState(null);
+  const [deletingTripId, setDeletingTripId] = useState(null);
   const recentTrips = savedItineraries.slice(0, 6);
+
+  async function handleDeleteClick(savedTrip) {
+    const shouldDelete = window.confirm(`Delete "${getItineraryTitle(savedTrip)}" from My Trips?`);
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setDeletingTripId(savedTrip.id);
+    await onDeleteTrip(savedTrip.id);
+    setDeletingTripId(null);
+
+    if (selectedTrip?.id === savedTrip.id) {
+      setSelectedTrip(null);
+    }
+  }
 
   return (
     <section className="page-shell my-trips-page">
@@ -307,9 +326,20 @@ function MyTripsPage({
                 </div>
                 <h2>{getItineraryTitle(savedTrip)}</h2>
                 <p>{getTripSummary(savedTrip)}</p>
-                <button className="text-action" type="button" onClick={() => setSelectedTrip(savedTrip)}>
-                  View itinerary
-                </button>
+                <div className="saved-trip-actions">
+                  <button className="text-action" type="button" onClick={() => setSelectedTrip(savedTrip)}>
+                    View itinerary
+                  </button>
+                  <button
+                    className="delete-trip-button"
+                    type="button"
+                    onClick={() => handleDeleteClick(savedTrip)}
+                    disabled={deletingTripId === savedTrip.id}
+                  >
+                    <Trash2 size={16} />
+                    {deletingTripId === savedTrip.id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
               </article>
             );
           })}
