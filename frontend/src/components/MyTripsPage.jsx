@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Bookmark,
   CalendarDays,
+  CloudSun,
   Clock3,
   MapPin,
   PlusCircle,
@@ -21,6 +22,57 @@ function getTripSummary(savedTrip) {
   }
 
   return overview.length > 150 ? `${overview.slice(0, 150)}...` : overview;
+}
+
+function formatWeatherDate(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateValue;
+  }
+
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function SavedWeatherForecast({ weatherDays }) {
+  if (!weatherDays?.length) {
+    return null;
+  }
+
+  return (
+    <div className="viewer-weather">
+      <div className="viewer-weather-heading">
+        <CloudSun size={17} />
+        <span>Weather by day</span>
+      </div>
+      <div className="weather-grid">
+        {weatherDays.map((weatherDay) => (
+          <article
+            className={`weather-card ${weatherDay.forecast_available ? "" : "is-muted"}`}
+            key={weatherDay.date}
+          >
+            <div>
+              <span>{formatWeatherDate(weatherDay.date)}</span>
+              <strong>
+                {weatherDay.forecast_available
+                  ? weatherDay.condition || "Forecast"
+                  : "Not available yet"}
+              </strong>
+            </div>
+            {weatherDay.forecast_available && (
+              <p>
+                {weatherDay.low_temperature_c}-{weatherDay.high_temperature_c}°C
+              </p>
+            )}
+            <small>{weatherDay.summary}</small>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function TripsVisual() {
@@ -55,6 +107,8 @@ function FullScreenItinerary({ savedTrip, onClose }) {
             <X size={22} />
           </button>
         </div>
+
+        <SavedWeatherForecast weatherDays={itinerary?.weather} />
 
         <div className="viewer-days">
           {days.map((day) => (

@@ -218,7 +218,7 @@ a {
 }
 
 .hero-content {
-  width: min(100%, 1120px);
+  width: min(100%, 1480px);
   align-self: end;
 }
 
@@ -262,9 +262,10 @@ h1 {
 
 .planner {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(360px, 0.9fr) auto;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(440px, 1.05fr);
   gap: 14px;
-  width: min(1060px, 100%);
+  width: min(90vw, 1340px);
+  margin: 0 auto;
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 8px;
@@ -318,15 +319,21 @@ h1 {
   border: 0;
 }
 
+.preferences-field {
+  grid-column: 1 / 2;
+}
+
 .input-shell,
 .date-controls,
-.date-input-shell {
+.date-input-shell,
+.preferences-shell {
   display: flex;
   align-items: center;
 }
 
 .input-shell,
-.date-controls {
+.date-controls,
+.preferences-shell {
   min-height: 58px;
   border-radius: 8px;
   background: #ffffff;
@@ -339,12 +346,26 @@ h1 {
 }
 
 .input-shell input,
-.date-input-shell input {
+.date-input-shell input,
+.preferences-shell textarea {
   width: 100%;
   border: 0;
   outline: 0;
   color: #17211d;
   background: transparent;
+}
+
+.preferences-shell {
+  align-items: flex-start;
+  min-height: 94px;
+  padding: 15px 18px;
+}
+
+.preferences-shell textarea {
+  min-height: 64px;
+  resize: vertical;
+  font: inherit;
+  line-height: 1.45;
 }
 
 .date-controls {
@@ -427,7 +448,9 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 58px;
+  align-self: start;
+  min-height: 94px;
+  margin-top: 28px;
   padding: 0 22px;
   border: 0;
   border-radius: 8px;
@@ -1191,6 +1214,25 @@ h1 {
   box-shadow: 0 12px 35px rgba(23, 33, 29, 0.12);
 }
 
+.viewer-weather {
+  margin-bottom: 2px;
+  padding: 20px;
+  border: 1px solid #dce5da;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.viewer-weather-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #526158;
+  font-size: 0.84rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .viewer-days {
   display: grid;
   gap: 18px;
@@ -1315,6 +1357,85 @@ h1 {
   color: #526158;
   font-size: 1rem;
   line-height: 1.7;
+}
+
+.weather-panel {
+  padding: 22px 24px;
+  margin-bottom: 18px;
+}
+
+.weather-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.weather-panel-heading .eyebrow {
+  margin: 0;
+}
+
+.weather-panel-heading span {
+  color: #69776e;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.weather-card {
+  display: grid;
+  gap: 10px;
+  min-height: 142px;
+  padding: 16px;
+  border: 1px solid rgba(49, 95, 76, 0.18);
+  border-radius: 8px;
+  background: linear-gradient(145deg, #f2f8f5, #ffffff);
+}
+
+.weather-card div {
+  display: grid;
+  gap: 5px;
+}
+
+.weather-card span {
+  color: #69776e;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.weather-card strong {
+  color: #17211d;
+  font-size: 0.98rem;
+  line-height: 1.25;
+  text-transform: capitalize;
+}
+
+.weather-card p {
+  margin: 0;
+  color: #e0562f;
+  font-size: 1.5rem;
+  font-weight: 950;
+}
+
+.weather-card small {
+  color: #526158;
+  line-height: 1.45;
+}
+
+.weather-card.is-muted {
+  background: #f8faf7;
+}
+
+.weather-card.is-muted strong,
+.weather-card.is-muted small {
+  color: #69776e;
 }
 
 .generated-itinerary-grid {
@@ -1749,6 +1870,10 @@ h1 {
   .about-use-cases > div,
   .my-trips-empty-layout {
     grid-template-columns: 1fr;
+  }
+
+  .preferences-field {
+    grid-column: auto;
   }
 
   .my-trips-visual {

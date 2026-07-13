@@ -6,10 +6,12 @@ function TripPlannerForm({
   onDestinationChange,
   startDate,
   endDate,
+  preferences,
   maxDate,
   maxTripLengthDays,
   onStartDateChange,
   onEndDateChange,
+  onPreferencesChange,
   suggestions,
   onSuggestionSelect,
   onSubmit,
@@ -93,6 +95,18 @@ function TripPlannerForm({
           </label>
         </div>
       </fieldset>
+
+      <label className="field preferences-field">
+        <span>Trip Preferences</span>
+        <div className="preferences-shell">
+          <textarea
+            value={preferences}
+            onChange={(event) => onPreferencesChange(event.target.value)}
+            placeholder="Cuisines, interests, places you already have in mind, pace, budget, accessibility..."
+            rows={3}
+          />
+        </div>
+      </label>
 
       <button className="submit-button" type="submit">
         <Sparkles size={18} />

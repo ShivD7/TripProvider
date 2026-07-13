@@ -37,6 +37,7 @@ function App() {
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState(defaultStartDate);
   const [endDate, setEndDate] = useState(defaultEndDate);
+  const [preferences, setPreferences] = useState("");
   const [submittedTrip, setSubmittedTrip] = useState(null);
   const [generatedItinerary, setGeneratedItinerary] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -318,6 +319,7 @@ function App() {
       tripUnit: "days",
       startDate,
       endDate,
+      preferences: preferences.trim(),
     };
 
     setSubmittedTrip({
@@ -370,10 +372,12 @@ function App() {
             onDestinationChange={setDestination}
             startDate={startDate}
             endDate={endDate}
+            preferences={preferences}
             maxDate={maxSelectableDate}
             maxTripLengthDays={maxTripLengthDays}
             onStartDateChange={handleStartDateChange}
             onEndDateChange={handleEndDateChange}
+            onPreferencesChange={setPreferences}
             suggestions={suggestions}
             onSuggestionSelect={setDestination}
             onSubmit={handleSubmit}

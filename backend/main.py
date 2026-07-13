@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -29,6 +29,10 @@ class TripRequest(BaseModel):
     tripUnit: str = Field(description="The unit for the trip length.")
     startDate: str | None = Field(default=None, description="The trip start date in YYYY-MM-DD format.")
     endDate: str | None = Field(default=None, description="The trip end date in YYYY-MM-DD format.")
+    preferences: str | None = Field(
+        default=None,
+        description="Optional user preferences, such as cuisines, interests, pace, budget, neighborhoods, or must-see places.",
+    )
 
 
 @app.get("/")
@@ -43,7 +47,19 @@ async def get_itinerary(request: TripRequest):
         request.tripUnit,
         request.startDate,
         request.endDate,
+        request.preferences,
     )
     return itinerary
 
-
+@app.get("/getWeatherData")
+async def weather(
+    destination: str = Query(description="The city, country, or destination to get weather for."),
+    startDate: str | None = Query(default=None, description="Optional trip start date in YYYY-MM-DD format."),
+    endDate: str | None = Query(default=None, description="Optional trip end date in YYYY-MM-DD format."),
+):
+    weather_data = await ItineraryAgent.fetch_weather_days(
+        destination,
+        startDate,
+        endDate,
+    )
+    return weather_data

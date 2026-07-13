@@ -1,7 +1,64 @@
 import React from "react";
-import { Bookmark, CalendarDays, CheckCircle2 } from "lucide-react";
+import { Bookmark, CalendarDays, CheckCircle2, CloudSun } from "lucide-react";
 import DayCard from "./DayCard.jsx";
 import GeneratedDayCard from "./GeneratedDayCard.jsx";
+
+function formatWeatherDate(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateValue;
+  }
+
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function WeatherForecast({ weatherDays }) {
+  if (!weatherDays?.length) {
+    return null;
+  }
+
+  return (
+    <div className="response-panel weather-panel">
+      <div className="weather-panel-heading">
+        <p className="eyebrow dark">
+          <CloudSun size={16} />
+          Weather by day
+        </p>
+        <span>{weatherDays.length} day forecast</span>
+      </div>
+
+      <div className="weather-grid">
+        {weatherDays.map((weatherDay) => (
+          <article
+            className={`weather-card ${weatherDay.forecast_available ? "" : "is-muted"}`}
+            key={weatherDay.date}
+          >
+            <div>
+              <span>{formatWeatherDate(weatherDay.date)}</span>
+              <strong>
+                {weatherDay.forecast_available
+                  ? weatherDay.condition || "Forecast"
+                  : "Not available yet"}
+              </strong>
+            </div>
+
+            {weatherDay.forecast_available && (
+              <p>
+                {weatherDay.low_temperature_c}-{weatherDay.high_temperature_c}°C
+              </p>
+            )}
+
+            <small>{weatherDay.summary}</small>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function ItineraryPreview({
   submittedTrip,
@@ -82,6 +139,8 @@ function ItineraryPreview({
           <div className="response-panel itinerary-overview">
             <p>{generatedItinerary.overview}</p>
           </div>
+
+          <WeatherForecast weatherDays={generatedItinerary.weather} />
 
           <div className="itinerary-grid generated-itinerary-grid">
             {generatedDays.map((day, index) => (

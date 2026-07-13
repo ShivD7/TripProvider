@@ -7,10 +7,12 @@ function Hero({
   onDestinationChange,
   startDate,
   endDate,
+  preferences,
   maxDate,
   maxTripLengthDays,
   onStartDateChange,
   onEndDateChange,
+  onPreferencesChange,
   suggestions,
   onSuggestionSelect,
   onSubmit,
@@ -40,10 +42,12 @@ function Hero({
           onDestinationChange={onDestinationChange}
           startDate={startDate}
           endDate={endDate}
+          preferences={preferences}
           maxDate={maxDate}
           maxTripLengthDays={maxTripLengthDays}
           onStartDateChange={onStartDateChange}
           onEndDateChange={onEndDateChange}
+          onPreferencesChange={onPreferencesChange}
           suggestions={suggestions}
           onSuggestionSelect={onSuggestionSelect}
           onSubmit={onSubmit}
