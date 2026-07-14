@@ -37,6 +37,7 @@ const minimumStartDate = addDays(formatDateInput(new Date()), 1);
 const defaultStartDate = minimumStartDate;
 const defaultEndDate = addDays(defaultStartDate, 4);
 const maxSelectableDate = addDays(defaultStartDate, 365);
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://tripprovider.onrender.com";
 
 function App() {
   const [destination, setDestination] = useState("");
@@ -407,7 +408,7 @@ function App() {
     setIsGenerating(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/getItinerary", {
+      const response = await fetch(`${apiBaseUrl}/getItinerary`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -424,7 +425,7 @@ function App() {
       resetTripForm();
     } catch (error) {
       setGenerationError(
-        "Could not generate the itinerary. Make sure the FastAPI backend is running on port 8000."
+        "Could not generate the itinerary. Make sure the TripProvider backend is running and reachable."
       );
       console.error(error);
     } finally {
