@@ -1,35 +1,57 @@
-import React from "react";
-import { Plane, Sparkles, UserCircle } from "lucide-react";
+import React, { useState } from "react";
+import { Menu, Plane, Sparkles, UserCircle, X } from "lucide-react";
 
 function Navbar({ currentUser, currentPage, onNavigate, onAuthClick, onLogout }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  function handleNavigate(page) {
+    onNavigate(page);
+    setIsMenuOpen(false);
+  }
+
+  function handleAuthClick(mode) {
+    onAuthClick(mode);
+    setIsMenuOpen(false);
+  }
+
   return (
     <nav className="navbar">
-      <button className="brand nav-button" type="button" onClick={() => onNavigate("planner")}>
+      <button className="brand nav-button" type="button" onClick={() => handleNavigate("planner")}>
         <span className="brand-mark">
           <Plane size={20} />
         </span>
         TripProvider
       </button>
 
-      <div className="nav-links" aria-label="Primary navigation">
+      <button
+        className="mobile-menu-button"
+        type="button"
+        onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
+        aria-expanded={isMenuOpen}
+        aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+      >
+        {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      <div className={`nav-links ${isMenuOpen ? "open" : ""}`} aria-label="Primary navigation">
         <button
           className={currentPage === "planner" ? "active" : ""}
           type="button"
-          onClick={() => onNavigate("planner")}
+          onClick={() => handleNavigate("planner")}
         >
           Explore
         </button>
         <button
           className={currentPage === "my-trips" ? "active" : ""}
           type="button"
-          onClick={() => onNavigate("my-trips")}
+          onClick={() => handleNavigate("my-trips")}
         >
           My Trips
         </button>
         <button
           className={currentPage === "about" ? "active" : ""}
           type="button"
-          onClick={() => onNavigate("about")}
+          onClick={() => handleNavigate("about")}
         >
           About
         </button>
@@ -46,7 +68,7 @@ function Navbar({ currentUser, currentPage, onNavigate, onAuthClick, onLogout })
           </button>
         </div>
       ) : (
-        <button className="nav-action" type="button" onClick={() => onAuthClick("login")}>
+        <button className="nav-action" type="button" onClick={() => handleAuthClick("login")}>
           <Sparkles size={17} />
           Sign in
         </button>

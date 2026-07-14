@@ -37,8 +37,9 @@ function Hero({
         </p>
         <h1>Design a trip that feels like it was made by someone who knows the city.</h1>
         <p className="hero-copy">
-          Pick a destination, choose your travel dates, and preview the itinerary
-          experience your agent will generate once your backend is connected.
+          TripProvider creates structured, date-aware itineraries that combine
+          destination research, local dining, weather context, and personal travel
+          preferences in one organized planning workspace.
         </p>
 
         <TripPlannerForm

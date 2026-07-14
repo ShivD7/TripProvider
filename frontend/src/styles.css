@@ -56,7 +56,8 @@ a {
 .brand,
 .nav-action,
 .profile-button,
-.logout-button {
+.logout-button,
+.mobile-menu-button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -67,6 +68,19 @@ a {
   color: inherit;
   background: transparent;
   cursor: pointer;
+}
+
+.mobile-menu-button {
+  display: none;
+  width: 42px;
+  height: 42px;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 8px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  backdrop-filter: blur(16px);
 }
 
 .brand {
@@ -1970,14 +1984,43 @@ h1 {
 
 @media (max-width: 920px) {
   .navbar {
-    position: absolute;
+    position: fixed;
     top: 14px;
     left: 16px;
     right: 16px;
+    gap: 10px;
+  }
+
+  .mobile-menu-button {
+    display: inline-flex;
+    order: 3;
   }
 
   .nav-links {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
     display: none;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(17, 30, 28, 0.9);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.26);
+    backdrop-filter: blur(22px);
+    animation: popIn 180ms ease both;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links button {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 13px 14px;
+    text-align: left;
   }
 
   .hero {
@@ -2040,18 +2083,58 @@ h1 {
 
 @media (max-width: 560px) {
   .navbar {
+    left: 10px;
+    right: 10px;
     padding: 10px;
   }
 
+  .brand {
+    min-width: 0;
+    padding-right: 0;
+    font-size: 0.95rem;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+  }
+
   .nav-action {
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 0.9rem;
+  }
+
+  .nav-action svg {
     display: none;
   }
 
+  .nav-user {
+    gap: 6px;
+  }
+
   .profile-button {
-    max-width: 130px;
+    max-width: 98px;
+    min-height: 38px;
+    padding: 0 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .profile-button svg {
+    display: none;
+  }
+
+  .logout-button {
+    min-height: 38px;
+    padding: 0 10px;
+    font-size: 0.86rem;
+  }
+
+  .mobile-menu-button {
+    width: 38px;
+    height: 38px;
   }
 
   .hero {
