@@ -47,6 +47,34 @@ function wait(milliseconds) {
   });
 }
 
+async function getResponseErrorMessage(response) {
+  const fallbackMessage = `Backend returned ${response.status}`;
+
+  try {
+    const contentType = response.headers.get("content-type") || "";
+
+    if (contentType.includes("application/json")) {
+      const errorBody = await response.json();
+      const detail = errorBody.detail || errorBody.error || errorBody.message;
+
+      if (Array.isArray(detail)) {
+        return detail
+          .map((item) => `${item.loc?.join(".") || "Request"}: ${item.msg}`)
+          .join(" ");
+      }
+
+      if (typeof detail === "string") {
+        return detail;
+      }
+    }
+
+    const errorText = await response.text();
+    return errorText || fallbackMessage;
+  } catch {
+    return fallbackMessage;
+  }
+}
+
 function App() {
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState(defaultStartDate);
@@ -422,6 +450,8 @@ function App() {
       let response;
 
       for (let attempt = 1; attempt <= backendWakeMaxAttempts; attempt += 1) {
+        let shouldRetry = false;
+
         try {
           if (attempt === 1) {
             setGenerationStatus("Contacting the TripProvider backend...");
@@ -443,11 +473,13 @@ function App() {
             break;
           }
 
-          if (![502, 503, 504].includes(response.status)) {
-            throw new Error(`Backend returned ${response.status}`);
+          shouldRetry = [502, 503, 504].includes(response.status);
+
+          if (!shouldRetry) {
+            throw new Error(await getResponseErrorMessage(response));
           }
         } catch (error) {
-          if (attempt === backendWakeMaxAttempts) {
+          if (!shouldRetry || attempt === backendWakeMaxAttempts) {
             throw error;
           }
         }
@@ -456,7 +488,11 @@ function App() {
       }
 
       if (!response?.ok) {
-        throw new Error(`Backend returned ${response?.status || "no response"}`);
+        throw new Error(
+          response
+            ? await getResponseErrorMessage(response)
+            : "The backend did not send a response."
+        );
       }
 
       setGenerationStatus("Building your itinerary...");
@@ -466,7 +502,7 @@ function App() {
       resetTripForm();
     } catch (error) {
       setGenerationError(
-        "Could not generate the itinerary. The backend did not respond after waiting for Render to wake it up."
+        `Could not generate the itinerary. ${error.message}`
       );
       console.error(error);
     } finally {
