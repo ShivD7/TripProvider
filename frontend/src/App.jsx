@@ -38,6 +38,14 @@ const defaultStartDate = minimumStartDate;
 const defaultEndDate = addDays(defaultStartDate, 4);
 const maxSelectableDate = addDays(defaultStartDate, 365);
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://tripprovider.onrender.com";
+const backendWakeRetryDelayMs = 5000;
+const backendWakeMaxAttempts = 18;
+
+function wait(milliseconds) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, milliseconds);
+  });
+}
 
 function App() {
   const [destination, setDestination] = useState("");
@@ -47,6 +55,7 @@ function App() {
   const [submittedTrip, setSubmittedTrip] = useState(null);
   const [generatedItinerary, setGeneratedItinerary] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStatus, setGenerationStatus] = useState("");
   const [generationError, setGenerationError] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPage, setCurrentPage] = useState("planner");
@@ -242,6 +251,7 @@ function App() {
   function handleClearGeneratedItinerary() {
     setSubmittedTrip(null);
     setGeneratedItinerary(null);
+    setGenerationStatus("");
     setGenerationError("");
     setSaveNotice(null);
   }
@@ -405,27 +415,58 @@ function App() {
     });
     setGeneratedItinerary(null);
     setGenerationError("");
+    setGenerationStatus("Starting your itinerary request...");
     setIsGenerating(true);
 
     try {
-      const response = await fetch(`${apiBaseUrl}/getItinerary`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(tripRequest),
-      });
+      let response;
 
-      if (!response.ok) {
-        throw new Error(`Backend returned ${response.status}`);
+      for (let attempt = 1; attempt <= backendWakeMaxAttempts; attempt += 1) {
+        try {
+          if (attempt === 1) {
+            setGenerationStatus("Contacting the TripProvider backend...");
+          } else {
+            setGenerationStatus(
+              `Render may be waking up the backend. Still trying... (${attempt}/${backendWakeMaxAttempts})`
+            );
+          }
+
+          response = await fetch(`${apiBaseUrl}/getItinerary`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(tripRequest),
+          });
+
+          if (response.ok) {
+            break;
+          }
+
+          if (![502, 503, 504].includes(response.status)) {
+            throw new Error(`Backend returned ${response.status}`);
+          }
+        } catch (error) {
+          if (attempt === backendWakeMaxAttempts) {
+            throw error;
+          }
+        }
+
+        await wait(backendWakeRetryDelayMs);
       }
 
+      if (!response?.ok) {
+        throw new Error(`Backend returned ${response?.status || "no response"}`);
+      }
+
+      setGenerationStatus("Building your itinerary...");
       const itinerary = await response.json();
       setGeneratedItinerary(itinerary);
+      setGenerationStatus("");
       resetTripForm();
     } catch (error) {
       setGenerationError(
-        "Could not generate the itinerary. Make sure the TripProvider backend is running and reachable."
+        "Could not generate the itinerary. The backend did not respond after waiting for Render to wake it up."
       );
       console.error(error);
     } finally {
@@ -467,6 +508,7 @@ function App() {
             mockDays={mockDays}
             generatedItinerary={generatedItinerary}
             isGenerating={isGenerating}
+            generationStatus={generationStatus}
             generationError={generationError}
             currentUser={currentUser}
             onSaveItinerary={handleSaveItinerary}

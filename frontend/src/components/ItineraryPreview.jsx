@@ -65,6 +65,7 @@ function ItineraryPreview({
   mockDays,
   generatedItinerary,
   isGenerating,
+  generationStatus,
   generationError,
   currentUser,
   onSaveItinerary,
@@ -131,7 +132,7 @@ function ItineraryPreview({
       {isGenerating && (
         <div className="response-panel loading-panel">
           <div className="loading-bar" />
-          <p>Your backend is talking to the itinerary agent. This can take a moment.</p>
+          <p>{generationStatus || "Your backend is talking to the itinerary agent. This can take a moment."}</p>
         </div>
       )}
 
