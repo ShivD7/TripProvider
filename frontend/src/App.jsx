@@ -11,6 +11,8 @@ import { supabase } from "./lib/supabaseClient.js";
 import { CheckCircle2, LogOut } from "lucide-react";
 
 const maxTripLengthDays = 21;
+const maxDestinationLength = 120;
+const maxPreferencesLength = 1000;
 
 function formatDateInput(date) {
   const year = date.getFullYear();
@@ -416,6 +418,8 @@ function App() {
 
     if (
       !destination.trim() ||
+      destination.trim().length > maxDestinationLength ||
+      preferences.trim().length > maxPreferencesLength ||
       !startDate ||
       !endDate ||
       startDate < minimumStartDate ||
@@ -531,6 +535,8 @@ function App() {
             minDate={minimumStartDate}
             maxDate={maxSelectableDate}
             maxTripLengthDays={maxTripLengthDays}
+            maxDestinationLength={maxDestinationLength}
+            maxPreferencesLength={maxPreferencesLength}
             onStartDateChange={handleStartDateChange}
             onEndDateChange={handleEndDateChange}
             onPreferencesChange={setPreferences}

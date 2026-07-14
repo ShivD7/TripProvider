@@ -11,6 +11,8 @@ function Hero({
   minDate,
   maxDate,
   maxTripLengthDays,
+  maxDestinationLength,
+  maxPreferencesLength,
   onStartDateChange,
   onEndDateChange,
   onPreferencesChange,
@@ -48,6 +50,8 @@ function Hero({
           minDate={minDate}
           maxDate={maxDate}
           maxTripLengthDays={maxTripLengthDays}
+          maxDestinationLength={maxDestinationLength}
+          maxPreferencesLength={maxPreferencesLength}
           onStartDateChange={onStartDateChange}
           onEndDateChange={onEndDateChange}
           onPreferencesChange={onPreferencesChange}

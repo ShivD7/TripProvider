@@ -10,6 +10,8 @@ function TripPlannerForm({
   minDate,
   maxDate,
   maxTripLengthDays,
+  maxDestinationLength,
+  maxPreferencesLength,
   onStartDateChange,
   onEndDateChange,
   onPreferencesChange,
@@ -43,6 +45,8 @@ function TripPlannerForm({
             onFocus={() => setShowSuggestions(true)}
             placeholder="Where do you want to go?"
             autoComplete="off"
+            maxLength={maxDestinationLength}
+            required
           />
         </div>
 
@@ -107,8 +111,10 @@ function TripPlannerForm({
             onChange={(event) => onPreferencesChange(event.target.value)}
             placeholder="Cuisines, interests, places you already have in mind, pace, budget, accessibility..."
             rows={3}
+            maxLength={maxPreferencesLength}
           />
         </div>
+        <small>{preferences.length}/{maxPreferencesLength} characters</small>
       </label>
 
       <button className="submit-button" type="submit" disabled={isGenerating}>
